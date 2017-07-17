@@ -1,0 +1,51 @@
+# This document represents a Deployment
+kind: Deployment
+# The version of this Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  # Unique key of this Deployment instance
+  name: jersey-netty-deployment
+# Specification of the desired behavior of this Deployment
+spec:
+  # Number of desired pods to be managed
+  replicas: 1
+  # Template describes the pods associated with this deployment
+  template:
+    metadata:
+      labels:
+        # Label (key/value pair) associated with this pod template
+        app: jersey-netty
+    # Specification of the desired behavior of a pod
+    spec:
+      # List of containers belonging to the pod
+      containers:
+        # Name of the container, specified as a DNS_LABEL
+      - name: jersey-netty
+        # Docker image name
+        image: jersey-netty-app
+        # Image pull policy, "IfNotPresent" == pull if not in local repository
+        imagePullPolicy: IfNotPresent
+        # List of ports to expose from the container
+        ports:
+        - containerPort: 8080
+        # Periodic probe of container liveness
+        livenessProbe:
+          httpGet:
+            path: probe/liveness
+            port: 8080
+        # Periodic probe of container service readiness
+        readinessProbe:
+          httpGet:
+            path: probe/readiness
+            port: 8080
+        # Actions that the management system should take in response to container lifecycle events
+        lifecycle:
+#          postStart:
+#            httpGet:
+#              path: lifecycle/postStart
+#              port: 8080
+          # PreStop is called immediately before a container is terminated
+          preStop:
+            httpGet:
+              path: lifecycle/preStop
+              port: 8080

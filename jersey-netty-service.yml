@@ -1,0 +1,24 @@
+# This document represents a Service
+kind: Service
+# The version of this Service
+apiVersion: v1
+metadata:
+  # Unique key of this Service instance
+  name: jersey-netty-service
+# Specification of the designed behaviour of the Service
+spec:
+  # Route service traffic to pods with label keys and values matching this selector.
+  selector:
+    # The label declared in the deployment specification
+    # Requests will be routed to pods matching this label
+    app: jersey-netty
+  # Accept traffic sent to port 8080 and mapped to port 8080 on the matched pods
+  ports:
+    - protocol: TCP
+      port: 8080
+      # The target port can refer to a name so is not hard coded
+      targetPort: 8080
+  # Expose this Service running in the virtual machine (the single node) at
+  # a stable port. The node will proxy that static port and redirect to pods.
+  # A pod is chosen at random
+  type: NodePort
