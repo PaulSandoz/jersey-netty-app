@@ -41,7 +41,7 @@ deploy:
       code: |
         mkdir -p /opt/app
         mv $WERCKER_ROOT/target/jersey-netty-app-1.0-SNAPSHOT.jar /opt/app/jersey-netty-app-1.0-SNAPSHOT.jar
-        mv -r $WERCKER_ROOT/target/dependency /opt/app/dependency
+        mv $WERCKER_ROOT/target/dependency /opt/app/dependency
         mv $WERCKER_ROOT/jdk-9 /opt/jdk-9
 
     - script:
