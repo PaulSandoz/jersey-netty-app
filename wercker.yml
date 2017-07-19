@@ -1,0 +1,62 @@
+box:
+  id: quay.io/paulsandoz/alpine-jdk-9-maven:0.1
+  cmd: /bin/sh
+
+# Builds the application and create the custom JDK 9 image
+# TODO automate maven settings.xml with configuration to $WERCKER_CACHE_DIR?
+# TODO test the application using the JDK 9 custom image
+# TODO Note: JDK 9 custom image could be encapsualted within separate docker image
+# TODO   although that complicates the pipelines and workflow
+build:
+  steps:
+    - script:
+      name: build and test the application
+      code: |
+        export PATH=$PATH:$JAVA_HOME/bin:$MAVEN_HOME/bin
+        mvn -Dmaven.repo.local=$WERCKER_CACHE_DIR/.m2 package
+
+    - script:
+      name: create custom JDK 9 image
+      code: |
+        $JAVA_HOME/bin/jlink --module-path $JAVA_HOME/jmods \
+          --add-modules java.base,java.logging,java.management,java.xml,jdk.management,jdk.unsupported \
+          --strip-debug \
+          --compress 2 \
+          --no-header-files \
+          --output jdk-9
+
+# Push the application image
+# Chained from build
+# TODO factor out maven artifact version in env variable
+# TODO can wercker know about the version in the pom.xml file?
+# TODO factor out docker image tag in env variable (same as maven?)
+deploy:
+  box:
+    id: alpine:3.6
+    cmd: /bin/sh
+
+  steps:
+    - script:
+      name: move binaries to /opt
+      code: |
+        mkdir -p /opt/app
+        mv $WERCKER_ROOT/target/jersey-netty-app-1.0-SNAPSHOT.jar /opt/app/jersey-netty-app-1.0-SNAPSHOT.jar
+        mv -r $WERCKER_ROOT/target/dependency /opt/app/dependency
+        mv $WERCKER_ROOT/jdk-9 /opt/jdk-9
+
+    - script:
+      name: cleanup build result
+      code: rm -rf $WERCKER_ROOT
+
+    - internal/docker-push:
+      disable-sync: true
+      username: $QUAY_USERNAME
+      password: $QUAY_PASSWORD
+      tag: 0.1
+      ports: 8080
+      cmd: "/opt/jdk-9/bin/java -cp /opt/app/jersey-netty-app-1.0-SNAPSHOT.jar:/opt/app/dependency/* app.App"
+      repository: quay.io/paulsandoz/jersey-netty-app
+      registry: https://quay.io
+
+# TODO deploy to a kubernetes cluster
+# TODO deploy dependent heml-based services, such as prometheus/grafana
