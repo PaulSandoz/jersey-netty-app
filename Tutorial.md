@@ -1637,6 +1637,10 @@ text field and execute the query:
 
     jvm_memory_pool_bytes_used
 
+(TODO: update section to use `process_cpu_seconds_total` for introduction to
+metrics when pull request https://github.com/prometheus/client_java/pull/278 is
+accepted.)
+
 The metric `jvm_memory_pool_bytes_used` is a guage reports the size on bytes
 of various memory pools of the Java Virtual Machine, such as the spaces used by
 the G1 garbage collector.
