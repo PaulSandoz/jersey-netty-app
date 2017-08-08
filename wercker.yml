@@ -52,7 +52,7 @@ deploy:
       disable-sync: true
       username: $QUAY_USERNAME
       password: $QUAY_PASSWORD
-      tag: 0.1
+      tag: 0.2
       ports: 8080
       cmd: "/opt/jdk-9/bin/java -cp /opt/app/jersey-netty-app-1.0-SNAPSHOT.jar:/opt/app/dependency/* app.App"
       repository: quay.io/paulsandoz/jersey-netty-app
