@@ -58,7 +58,7 @@ public class Mandel {
                 // Calculate the imaginary c value
                 .mapToDouble(l -> ui - (l * stepi))
                 .mapToObj(this::renderLine)
-                .collect(joining("\n"));
+                .collect(joining("\n", "|", "|"));
     }
 
     String renderLine(double ci) {
