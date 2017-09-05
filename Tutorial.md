@@ -1635,17 +1635,15 @@ case there should only be one such pod (if linearly following the tutorial.)
 Go back to the graph page and type the following expression into the expression
 text field and execute the query:
 
-    jvm_memory_pool_bytes_used
+    rate(process_cpu_seconds_total[1m])
 
-(TODO: update section to use `process_cpu_seconds_total` for introduction to
-metrics when pull request https://github.com/prometheus/client_java/pull/278 is
-accepted.)
-
-The metric `jvm_memory_pool_bytes_used` is a guage reports the size on bytes
-of various memory pools of the Java Virtual Machine, such as the spaces used by
-the G1 garbage collector.
-
-Nothing interesting is happening at the moment so lets create some
+The metric `process_cpu_seconds_total` is a counter (a range vector that varies
+over time) that accumulates the total number of CPU seconds of the host (it will
+always increase until it is reset, and Prometheus will recognize such
+discontinuities).  Querying that value directly is not particular useful.
+Instead we query the per-second average rate of increase of that value as
+measured over the last 1 minute.  This will give us a familiar graph of CPU
+activity.  Nothing interesting is happening at the moment so lets create some
 load then re-execute the query (keep re-executing while the work is being
 performed):
 
@@ -1656,14 +1654,18 @@ performed):
         sleep 30; \
         wrk -t4 -c4 -d30s $JN_SERVICE/work
 
-Observe the change in pool values usage when the work was performed.
+Observe the increase in CPU usage when the work was performed.
 
-Create another graph that execute the following query:
+Create two further separate graphs that execute the following queries:
 
-    rate(jvm_gc_collection_seconds_count{gc="G1 Young Generation"}[20s])
+    jvm_memory_pool_bytes_used
 
-This second plots the rate at which GC collections occur .  Notice the increase
-in GC activity when work is performed.
+    rate(jvm_gc_collection_seconds_count{gc="PS Scavenge"}[20s])
+
+The first plots the various memory pools in the JVM such as eden space.  The
+second plots the rate at which GC collections occur.  Notice the changes in eden
+space and GC activity that is correlated with CPU activity when work is
+performed.
 
 So far we only have metrics for one pod.  Let's scale up the application:
 
