@@ -4,9 +4,9 @@ FROM alpine:3.6
 RUN apk update \
   && apk add wget
 RUN mkdir /opt
-RUN wget -q http://download.java.net/java/jdk9-alpine/archive/177/binaries/jdk-9-ea+177_linux-x64-musl_bin.tar.gz
-RUN tar -x -f jdk-9-ea+177_linux-x64-musl_bin.tar.gz -C /opt
-RUN rm jdk-9-ea+177_linux-x64-musl_bin.tar.gz
+RUN wget -q http://download.java.net/java/jdk9-alpine/archive/181/binaries/jdk-9-ea+181_linux-x64-musl_bin.tar.gz
+RUN tar -x -f jdk-9-ea+181_linux-x64-musl_bin.tar.gz -C /opt
+RUN rm jdk-9-ea+181_linux-x64-musl_bin.tar.gz
 # Add maven
 RUN wget -q http://apache.claz.org/maven/maven-3/3.5.0/binaries/apache-maven-3.5.0-bin.tar.gz
 RUN tar -x -f apache-maven-3.5.0-bin.tar.gz -C /opt

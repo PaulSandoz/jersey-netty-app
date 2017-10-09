@@ -23,6 +23,10 @@ spec:
       - name: jersey-netty
         # Docker image name
         image: jersey-netty-app
+        # Uncomment to set memory limits
+#        resources:
+#          limits:
+#            memory: "200Mi"
         # Image pull policy, "IfNotPresent" == pull if not in local repository
         imagePullPolicy: IfNotPresent
         # List of ports to expose from the container

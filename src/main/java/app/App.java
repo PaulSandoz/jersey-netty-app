@@ -42,6 +42,8 @@ public class App {
     static final CountDownLatch FINISH = new CountDownLatch(1);
 
     public static void main(String[] args) {
+        APP_LOGGER.info("Max memory " + Runtime.getRuntime().maxMemory() / (1 << 20));
+
         APP_LOGGER.info("Prometheus intializing JVM metrics");
 
         DefaultExports.initialize();
